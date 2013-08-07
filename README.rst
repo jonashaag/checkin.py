@@ -1,7 +1,9 @@
+``checkin.py``
+==============
 Dead simple time tracking tool I have been using for the last 2 years.
 
-Keeps track of your hours in a JSON file ("hours.json"). A human-readable version
-of that database is stored in "hours.txt"
+Keeps track of your hours in a JSON file (``hours.json``). A human-readable version
+of that database is stored in ``hours.txt``.
 
 Use like this::
 
@@ -22,7 +24,7 @@ Now have a look at ``~/hours.txt``::
 
 "Total balance" indicates how many more hours you should work this month
 (configurable using the ``HOURS_PER_MONTH`` variable, defaults to 160).
-(Balance is carried over to the next month.)
+Balance is carried over to the next month.
 
 To fix up things (e.g. you forgot to check in/out), you can also pass in a time argument::
 
