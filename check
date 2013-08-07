@@ -1,0 +1,102 @@
+#!/usr/bin/env python2
+import os
+import time
+import datetime
+import sys
+import json
+
+
+DB = os.path.expanduser('~/hours.json')
+DB_HUMAN = os.path.expanduser('~/hours.txt')
+HOURS_PER_MONTH = 160
+
+if os.path.exists(DB):
+    db = json.load(open(DB))
+else:
+    db = []
+
+
+def get_time(t):
+    if not t:
+        return int(time.time())
+    else:
+        h, m = map(int, t.split(':'))
+        return int(time.mktime(datetime.datetime.now().replace(hour=h, minute=m).timetuple()))
+
+
+def checkin(when=None):
+    if db:
+        last_checkin = db[-1]
+        assert 'out' in last_checkin, "Already checked in"
+    db.append({'in': get_time(when)})
+
+
+def checkout(when=None):
+    last_checkin = db[-1]
+    assert 'in' in last_checkin, "Not yet checked in"
+    assert 'out' not in last_checkin, "Already checked out"
+    last_checkin['out'] = get_time(when)
+
+
+def save_db():
+    json.dump(db, open(DB, 'w'))
+
+    prevmonth = None
+    summonth = datetime.timedelta()
+    output = []
+
+    total = []
+
+    def format_duration(delta):
+        totalseconds = delta.days * 60 * 60 * 24 + delta.seconds
+        h, s = divmod(totalseconds, 3600)
+        return '%dh %dm' % (h, int(s/60))
+
+    def summary(delta):
+        output.append('')
+        output.append(' '*25 + 'Total: %s' % format_duration(delta))
+        output.append('')
+        output.append('')
+        total.append(summonth)
+
+    for entry in db:
+        if 'out' not in entry:
+            continue
+
+        checkin_datetime = datetime.datetime.fromtimestamp(entry['in'])
+        checkout_datetime = datetime.datetime.fromtimestamp(entry['out'])
+
+        if prevmonth != checkin_datetime.month:
+            if summonth:
+                summary(summonth)
+                summonth = datetime.timedelta()
+            output.append(checkin_datetime.strftime('%B %Y'))
+            output.append('=' * 20)
+            prevmonth = checkin_datetime.month
+
+        summonth += (checkout_datetime - checkin_datetime)
+
+        output.append(
+            checkin_datetime.strftime('%a, %d. %b\t%H:%M - ')
+          + checkout_datetime.strftime('%H:%M = ')
+          + str(checkout_datetime - checkin_datetime)
+        )
+
+
+    summary(summonth)
+
+    balance = sum(total, datetime.timedelta()) \
+              - datetime.timedelta(hours=1) * HOURS_PER_MONTH * len(total)
+    output.extend(['Total balance: %s' % format_duration(balance), ''])
+
+    open(DB_HUMAN, 'w').write('\n'.join(output))
+
+
+def main():
+    if len(sys.argv) > 1:
+        {'in': checkin, 'out': checkout}[sys.argv[1]](*sys.argv[2:])
+    save_db()
+    print open(DB_HUMAN).read()
+
+
+main()
