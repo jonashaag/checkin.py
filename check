@@ -85,9 +85,9 @@ def save_db():
 
     summary(summonth)
 
-    balance = sum(total, datetime.timedelta()) \
-              - datetime.timedelta(hours=1) * HOURS_PER_MONTH * len(total)
-    output.extend(['Total balance: %s' % format_duration(balance), ''])
+    missing = datetime.timedelta(hours=HOURS_PER_MONTH) * len(total) \
+              - sum(total, datetime.timedelta())
+    output.extend(['Total missing: %s' % format_duration(missing), ''])
 
     open(DB_HUMAN, 'w').write('\n'.join(output))
 
