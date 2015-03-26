@@ -60,10 +60,12 @@ def save_db():
         total.append(summonth)
 
     for entry in db:
+        checkin_datetime = datetime.datetime.fromtimestamp(entry['in'])
+
         if 'out' not in entry:
+            output.append(checkin_datetime.strftime('%a, %d. %b\t%H:%M - '))
             continue
 
-        checkin_datetime = datetime.datetime.fromtimestamp(entry['in'])
         checkout_datetime = datetime.datetime.fromtimestamp(entry['out'])
 
         if prevmonth != checkin_datetime.month:
