@@ -20,9 +20,9 @@ Now have a look at ``~/hours.txt``::
                             Total: 7h 26m
 
 
-                            Total balance: -153h 26m
+                            Total missing: 153h 26m
 
-"Total balance" indicates how many more hours you should work this month
+"Total missing" indicates how many more hours you should work this month
 (configurable using the ``HOURS_PER_MONTH`` variable, defaults to 160).
 Balance is carried over to the next month.
 
