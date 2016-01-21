@@ -20,8 +20,12 @@ def get_time(t):
     if not t:
         return int(time.time())
     else:
-        h, m = map(int, t.split(':'))
-        return int(time.mktime(datetime.datetime.now().replace(hour=h, minute=m).timetuple()))
+        try:
+            dt = datetime.datetime.strptime(t, "%H:%M")
+            dt = datetime.datetime.now().replace(hour=dt.hour, minute=dt.minute)
+        except ValueError:
+            dt = datetime.datetime.strptime(t, "%d.%m.%Y-%H:%M")
+        return int(time.mktime(dt.timetuple()))
 
 
 def checkin(when=None):
