@@ -1,6 +1,6 @@
 ``checkin.py``
 ==============
-Dead simple time tracking tool I have been using for the last 2 years.
+Dead simple time tracking tool I have been using for the last 4 years.
 
 Keeps track of your hours in a JSON file (``hours.json``). A human-readable version
 of that database is stored in ``hours.txt``.
