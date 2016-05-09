@@ -42,6 +42,12 @@ def checkout(when=None):
     last_checkin['out'] = get_time(when)
 
 
+def nextmonth(m):
+    if m == 12:
+        return 1
+    return m + 1
+
+
 def save_db():
     json.dump(db, open(DB, 'w'))
 
@@ -74,9 +80,13 @@ def save_db():
             line_format = "{checkin} -  NOW  = {duration}"
 
         if prevmonth != checkin_datetime.month:
-            if summonth:
+            if prevmonth is not None:
                 summary(summonth)
                 summonth = datetime.timedelta()
+                expected_next_month = nextmonth(prevmonth)
+                while expected_next_month != checkin_datetime.month:
+                    summary(datetime.timedelta())
+                    expected_next_month = nextmonth(expected_next_month)
             output.append(checkin_datetime.strftime('%B %Y'))
             output.append('=' * 20)
             prevmonth = checkin_datetime.month
