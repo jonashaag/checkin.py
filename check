@@ -28,18 +28,30 @@ def get_time(t):
         return int(time.mktime(dt.timetuple()))
 
 
-def checkin(when=None):
+def checkin(when_or_message=None, message=None):
     if db:
         last_checkin = db[-1]
         assert 'out' in last_checkin, "Already checked in"
-    db.append({'in': get_time(when)})
+    try:
+        get_time(when_or_message)
+    except:
+        message = when_or_message
+        when_or_message = None
+    db.append({'in': get_time(when_or_message), 'message': message})
 
 
-def checkout(when=None):
+def checkout(when_or_message=None, message=None):
     last_checkin = db[-1]
     assert 'in' in last_checkin, "Not yet checked in"
     assert 'out' not in last_checkin, "Already checked out"
-    last_checkin['out'] = get_time(when)
+    if message:
+        last_checkin['message'] = message
+    try:
+        get_time(when_or_message)
+    except:
+        last_checkin['message'] = when_or_message
+        when_or_message = None
+    last_checkin['out'] = get_time(when_or_message)
 
 
 def nextmonth(m):
@@ -74,10 +86,10 @@ def save_db():
 
         if 'out' in entry:
             checkout_datetime = datetime.datetime.fromtimestamp(entry['out'])
-            line_format = "{checkin} - {checkout} = {duration}"
+            line_format = "{checkin} - {checkout} = {duration}  '{message}'"
         else:
             checkout_datetime = datetime.datetime.now().replace(microsecond=0)
-            line_format = "{checkin} -  NOW  = {duration}"
+            line_format = "{checkin} -  NOW  = {duration}  '{message}'"
 
         if prevmonth != checkin_datetime.month:
             if prevmonth is not None:
@@ -92,11 +104,13 @@ def save_db():
             prevmonth = checkin_datetime.month
 
         summonth += (checkout_datetime - checkin_datetime)
+        message = entry.get('message')
 
         output.append(line_format.format(
             checkin=checkin_datetime.strftime('%a, %d. %b\t%H:%M'),
             checkout=checkout_datetime.strftime('%H:%M'),
-            duration=checkout_datetime - checkin_datetime
+            duration=checkout_datetime - checkin_datetime,
+            message=message
         ))
 
 
