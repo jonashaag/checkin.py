@@ -26,12 +26,19 @@ Now have a look at ``~/hours.txt``::
 (configurable using the ``HOURS_PER_MONTH`` variable, defaults to 160).
 Balance is carried over to the next month.
 
+Advanced usage
+--------------
+Manual checkin/checkout time
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 To fix up things (e.g. you forgot to check in/out), you can also pass in a time argument::
 
    check in 8:15
    check out 19:45  # 24 hour time format!
 
-You could pass in an optional message for each record. The message may be a project name, specific ticket or tags list.::
+Adding checkin/checkout messages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You can pass in an optional message for each record.
 
    check in "working on ticket #7777"
 
@@ -49,32 +56,10 @@ Result::
 You could correct the message on check out if you like.::
 
    check out "working on ticket #8888"
-Result::
 
-   November 2017
-   ====================
-   Thu, 16. Nov	20:00 - 20:02 = 0:01:44  'working on ticket #8888'
-
-                           Total: 0h 1m
-
-
-   Total missing: 159h 58m
-
-It works simlesly with specific time.::
+You can also pass both time and message::
 
    check in 19:00 "working on ticket #3333"
-
-Result::
-
-   November 2017
-   ====================
-   Thu, 16. Nov	20:00 - 20:02 = 0:01:44  'working on ticket #8888'
-   Thu, 16. Nov	19:00 -  NOW  = 1:06:00  'working on ticket #3333'
-
-                         Total: 1h 7m
-
-
-   Total missing: 158h 52m
 
 So you could correct the message with specific time as well.::
 
