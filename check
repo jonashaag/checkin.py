@@ -86,10 +86,10 @@ def save_db():
 
         if 'out' in entry:
             checkout_datetime = datetime.datetime.fromtimestamp(entry['out'])
-            line_format = "{checkin} - {checkout} = {duration}  '{message}'"
+            line_format = "{checkin} - {checkout} = {duration}"
         else:
             checkout_datetime = datetime.datetime.now().replace(microsecond=0)
-            line_format = "{checkin} -  NOW  = {duration}  '{message}'"
+            line_format = "{checkin} -  NOW  = {duration}"
 
         if prevmonth != checkin_datetime.month:
             if prevmonth is not None:
@@ -105,6 +105,9 @@ def save_db():
 
         summonth += (checkout_datetime - checkin_datetime)
         message = entry.get('message')
+
+        if message:
+            line_format += "  '{message}'"
 
         output.append(line_format.format(
             checkin=checkin_datetime.strftime('%a, %d. %b\t%H:%M'),
